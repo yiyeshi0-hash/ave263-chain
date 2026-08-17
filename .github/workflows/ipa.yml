@@ -11,9 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app || echo "default Xcode used"
-
       - name: Show Xcode
         run: xcodebuild -version
 
@@ -28,7 +25,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
-            build
+            build 2>&1 | tail -40
           # Package .app into .ipa (unsigned — install via trollstore/altstore-side tools on research device)
           APP=$(find build -name 'AVE263.app' -type d | head -1)
           echo "APP=$APP"
