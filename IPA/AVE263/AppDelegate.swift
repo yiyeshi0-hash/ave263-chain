@@ -1,4 +1,4 @@
-// AVE263 鈥?iPad 8 iPadOS 26.3 research trigger app
+// AppDelegate.swift — AVE263 research trigger app (AVE + JPEG runners)
 // Builds via GitHub Actions macOS runner into unsigned IPA
 import UIKit
 
@@ -21,34 +21,38 @@ final class ViewController: UIViewController {
     private let runButton = UIButton(type: .system)
     private let runV2Button = UIButton(type: .system)
     private let runV3Button = UIButton(type: .system)
+    private let jpegCreateButton = UIButton(type: .system)
+    private let jpegEncodeButton = UIButton(type: .system)
+    private let jpegNextButton = UIButton(type: .system)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
 
-        runButton.setTitle("v1 AVAssetWriter", for: .normal)
-        runButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-        runButton.addTarget(self, action: #selector(runTapped), for: .touchUpInside)
-        runButton.frame = CGRect(x: 20, y: 80, width: 340, height: 40)
+        let mk: (CGRect, String, Selector) -> UIButton = { frame, title, sel in
+            let b = UIButton(type: .system)
+            b.setTitle(title, for: .normal)
+            b.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
+            b.addTarget(self, action: sel, for: .touchUpInside)
+            b.frame = frame
+            return b
+        }
 
-        runV2Button.setTitle("v2 VideoToolbox (next)", for: .normal)
-        runV2Button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-        runV2Button.addTarget(self, action: #selector(runV2Tapped), for: .touchUpInside)
-        runV2Button.frame = CGRect(x: 20, y: 126, width: 340, height: 40)
+        runButton = mk(CGRect(x: 20, y: 60, width: 340, height: 32), "v1 AVAssetWriter H264", #selector(runTapped))
+        runV2Button = mk(CGRect(x: 20, y: 96, width: 340, height: 32), "v2 VT H264", #selector(runV2Tapped))
+        runV3Button = mk(CGRect(x: 20, y: 132, width: 340, height: 32), "v3 IOKit probe", #selector(runV3Tapped))
+        jpegCreateButton = mk(CGRect(x: 20, y: 176, width: 340, height: 32), "JPEG create-only (size seq)", #selector(jpegCreateTapped))
+        jpegEncodeButton = mk(CGRect(x: 20, y: 212, width: 340, height: 32), "JPEG create+encode", #selector(jpegEncodeTapped))
+        jpegNextButton = mk(CGRect(x: 20, y: 248, width: 340, height: 32), "JPEG next size", #selector(jpegNextTapped))
 
-        runV3Button.setTitle("v3 IOKit direct probe", for: .normal)
-        runV3Button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-        runV3Button.addTarget(self, action: #selector(runV3Tapped), for: .touchUpInside)
-        runV3Button.frame = CGRect(x: 20, y: 172, width: 340, height: 40)
-
-        log.frame = CGRect(x: 20, y: 220, width: view.bounds.width - 40, height: view.bounds.height - 240)
+        log.frame = CGRect(x: 20, y: 288, width: view.bounds.width - 40, height: view.bounds.height - 300)
         log.isEditable = false
         log.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
-        log.text = "AVE263 research 鈥?ready\n"
+        log.text = "AVE263 research ready\n"
 
-        view.addSubview(runButton)
-        view.addSubview(runV2Button)
-        view.addSubview(runV3Button)
+        for v in [runButton, runV2Button, runV3Button, jpegCreateButton, jpegEncodeButton, jpegNextButton] {
+            view.addSubview(v)
+        }
         view.addSubview(log)
     }
 
@@ -72,5 +76,25 @@ final class ViewController: UIViewController {
         AVERunnerV3.shared.start { [weak self] msg in
             DispatchQueue.main.async { self?.log.text += msg + "\n" }
         }
+    }
+
+    @objc private func jpegCreateTapped() {
+        log.text += AVERunnerJPEG.shared.next() + "\n"
+        log.text += "=== JPEG create-only ===\n"
+        AVERunnerJPEG.shared.createOnly { [weak self] msg in
+            DispatchQueue.main.async { self?.log.text += msg + "\n" }
+        }
+    }
+
+    @objc private func jpegEncodeTapped() {
+        log.text += AVERunnerJPEG.shared.next() + "\n"
+        log.text += "=== JPEG create+encode ===\n"
+        AVERunnerJPEG.shared.createAndEncode { [weak self] msg in
+            DispatchQueue.main.async { self?.log.text += msg + "\n" }
+        }
+    }
+
+    @objc private func jpegNextTapped() {
+        log.text += AVERunnerJPEG.shared.next() + "\n"
     }
 }
