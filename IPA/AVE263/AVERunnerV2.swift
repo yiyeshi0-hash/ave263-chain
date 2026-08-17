@@ -20,13 +20,13 @@ final class AVERunnerV2 {
             height: Int32(overflowH),
             codecType: kCMVideoCodecType_H264,
             encoderSpecification: nil,
-            sourceImageBufferAttributes: nil,
+            imageBufferAttributes: nil,
             compressedDataAllocator: nil,
             outputCallback: nil,
             refcon: nil,
             compressionSessionOut: &session
         )
-        report("VTCompressionSessionCreate status=\(status.rawValue)")
+        report("VTCompressionSessionCreate status=\(status)")
         guard status == noErr, let s = session else {
             report("session create failed — dims likely rejected by VideoToolbox")
             return
@@ -34,20 +34,23 @@ final class AVERunnerV2 {
 
         // Configure bitrate etc, then feed a small frame
         VTSessionSetProperty(s, key: kVTCompressionPropertyKey_AverageBitRate,
-                             value: 1_000_000)
+                             value: NSNumber(value: 1_000_000))
         VTSessionSetProperty(s, key: kVTCompressionPropertyKey_RealTime,
                              value: kCFBooleanTrue)
 
         var pb: CVPixelBuffer?
         let ps = CVPixelBufferCreate(kCFAllocatorDefault, 64, 64,
                                      kCVPixelFormatType_32BGRA, nil, &pb)
-        report("pixel buffer status=\(ps.rawValue)")
+        report("pixel buffer status=\(ps)")
         if let p = pb {
+            var flags: VTEncodeInfoFlags = []
             let enc = VTCompressionSessionEncodeFrame(s, imageBuffer: p,
                 presentationTimeStamp: CMTime(value: 0, timescale: 600),
                 duration: CMTime(value: 1, timescale: 600),
-                frameProperties: nil, infoFlagsOut: nil)
-            report("encodeFrame status=\(enc.rawValue)")
+                frameProperties: nil,
+                sourceFrameRefcon: nil,
+                infoFlagsOut: &flags)
+            report("encodeFrame status=\(enc)")
         }
         VTCompressionSessionInvalidate(s)
         report("V2 done")
