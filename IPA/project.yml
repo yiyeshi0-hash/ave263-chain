@@ -22,3 +22,6 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.research.ave263
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_VERSION: "5.0"
+        OTHER_LDFLAGS:
+          - "-framework"
+          - "CoreAudioTypes"
