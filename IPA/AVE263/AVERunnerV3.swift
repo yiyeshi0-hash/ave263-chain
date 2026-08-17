@@ -65,12 +65,13 @@ final class AVERunnerV3 {
                 }
             }
             let desc: String
-            switch r {
+            let ur = UInt32(bitPattern: r)
+            switch ur {
             case 0: desc = "OK out=\(outCount) v0=0x\(String(outScalar[0], radix: 16))"
             case 0xe00002c2: desc = "UNSUPPORTED"
             case 0xe00002be: desc = "MIG_BAD_ARG"
             case 0xe00002c1: desc = "MIG_BAD_ID"
-            default: desc = String(format: "0x%08x", r)
+            default: desc = String(format: "0x%08x", ur)
             }
             report("sel \(sel): \(desc)")
         }
