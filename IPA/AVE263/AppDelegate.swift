@@ -1,4 +1,4 @@
-// AVE263 — iPad 8 iPadOS 26.3 research trigger app
+// AVE263 鈥?iPad 8 iPadOS 26.3 research trigger app
 // Builds via GitHub Actions macOS runner into unsigned IPA
 import UIKit
 
@@ -31,7 +31,7 @@ final class ViewController: UIViewController {
         runButton.addTarget(self, action: #selector(runTapped), for: .touchUpInside)
         runButton.frame = CGRect(x: 20, y: 80, width: 340, height: 40)
 
-        runV2Button.setTitle("v2 VideoToolbox", for: .normal)
+        runV2Button.setTitle("v2 VideoToolbox (next)", for: .normal)
         runV2Button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         runV2Button.addTarget(self, action: #selector(runV2Tapped), for: .touchUpInside)
         runV2Button.frame = CGRect(x: 20, y: 126, width: 340, height: 40)
@@ -44,7 +44,7 @@ final class ViewController: UIViewController {
         log.frame = CGRect(x: 20, y: 220, width: view.bounds.width - 40, height: view.bounds.height - 240)
         log.isEditable = false
         log.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
-        log.text = "AVE263 research v3 — ready\n"
+        log.text = "AVE263 research 鈥?ready\n"
 
         view.addSubview(runButton)
         view.addSubview(runV2Button)
@@ -60,6 +60,7 @@ final class ViewController: UIViewController {
     }
 
     @objc private func runV2Tapped() {
+        log.text += AVERunnerV2.shared.next() + "\n"
         log.text += "=== v2 start ===\n"
         AVERunnerV2.shared.start { [weak self] msg in
             DispatchQueue.main.async { self?.log.text += msg + "\n" }
