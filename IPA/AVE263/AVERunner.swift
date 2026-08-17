@@ -39,21 +39,24 @@ final class AVERunner {
         writer.startSession(atSourceTime: .zero)
         report("session started")
 
-        // Feed one frame to force encoder start
+        // Feed a NORMAL-size frame via a minimal adaptor (no explicit source
+        // pixel buffer attrs — avoids the dims-conflict exception). The encoder
+        // session itself carries the overflow dims, which is what drives
+        // AppleAVE2's buffer-size calculation.
         let adaptor = AVAssetWriterInputPixelBufferAdaptor(
             assetWriterInput: input,
             sourcePixelBufferAttributes: [
                 kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
-                kCVPixelBufferWidthKey as String: 64,
-                kCVPixelBufferHeightKey as String: 64,
             ])
         var pb: CVPixelBuffer?
-        CVPixelBufferCreate(kCFAllocatorDefault, 64, 64,
+        let cvtStatus = CVPixelBufferCreate(kCFAllocatorDefault, 64, 64,
                             kCVPixelFormatType_32BGRA, nil, &pb)
-        if let p = pb, adaptor.append(p, withPresentationTime: .zero) {
+        if cvtStatus != kCVReturnSuccess {
+            report("CVPixelBufferCreate failed status=\(cvtStatus)")
+        } else if let p = pb, adaptor.append(p, withPresentationTime: .zero) {
             report("frame appended")
         } else {
-            report("frame append failed (maybe dims rejected)")
+            report("frame append failed")
         }
 
         input.markAsFinished()
