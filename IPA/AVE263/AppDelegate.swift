@@ -50,9 +50,8 @@ final class ViewController: UIViewController {
         log.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
         log.text = "AVE263 research ready\n"
 
-        for v in [runButton, runV2Button, runV3Button, jpegCreateButton, jpegEncodeButton, jpegNextButton] {
-            view.addSubview(v)
-        }
+        let buttons: [UIButton] = [runButton, runV2Button, runV3Button, jpegCreateButton, jpegEncodeButton, jpegNextButton]
+        for v in buttons { view.addSubview(v) }
         view.addSubview(log)
     }
 
