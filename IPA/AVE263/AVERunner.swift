@@ -30,9 +30,7 @@ final class AVERunner {
                 AVVideoMaxKeyFrameIntervalKey: 30,
             ],
         ]
-        guard let input = AVAssetWriterInput(mediaType: .video, outputSettings: settings) else {
-            report("input init failed"); return
-        }
+        let input = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
         if writer.canAdd(input) { writer.add(input) } else {
             report("cannot add input"); return
         }
@@ -64,7 +62,6 @@ final class AVERunner {
             let status = writer.status.rawValue
             let err = writer.error?.localizedDescription ?? "none"
             report("finishWriting status=\(status) err=\(err)")
-            if let w = self as? AnyObject {} // no-op
             report("done — if device panicked check syslog for kernel trap near 0xfffffff0089f34f4")
         }
     }
