@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		100000000000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000001 /* AppDelegate.swift */; };
 		100000000000000000000002 /* AVERunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000002 /* AVERunner.swift */; };
+		100000000000000000000005 /* AVERunnerV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000005 /* AVERunnerV2.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -16,6 +17,7 @@
 		200000000000000000000002 /* AVERunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVERunner.swift; sourceTree = "<group>"; };
 		200000000000000000000003 /* AVE263.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AVE263.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		200000000000000000000004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		200000000000000000000005 /* AVERunnerV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVERunnerV2.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +44,7 @@
 			children = (
 				200000000000000000000001 /* AppDelegate.swift */,
 				200000000000000000000002 /* AVERunner.swift */,
+				200000000000000000000005 /* AVERunnerV2.swift */,
 				200000000000000000000004 /* Info.plist */,
 			);
 			path = AVE263;
@@ -125,6 +128,7 @@
 			files = (
 				100000000000000000000001 /* AppDelegate.swift in Sources */,
 				100000000000000000000002 /* AVERunner.swift in Sources */,
+				100000000000000000000005 /* AVERunnerV2.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
