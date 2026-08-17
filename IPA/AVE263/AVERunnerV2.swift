@@ -37,24 +37,29 @@ final class AVERunnerV2 {
         VTSessionSetProperty(s, key: kVTCompressionPropertyKey_ProfileLevel,
                              value: kVTProfileLevel_H264_Baseline_AutoLevel)
 
-        // 小帧 64x64 —— 会话尺寸才是关键
         var pb: CVPixelBuffer?
         let ps = CVPixelBufferCreate(kCFAllocatorDefault, 64, 64,
                                      kCVPixelFormatType_32BGRA, nil, &pb)
         report("pb=\(ps)")
-        if let p = pb {
-            var flags: VTEncodeInfoFlags = []
-            let enc = VTCompressionSessionEncodeFrame(s, imageBuffer: p,
-                presentationTimeStamp: CMTime(value: 0, timescale: 600),
-                duration: CMTime(value: 1, timescale: 600),
-                frameProperties: nil, sourceFrameRefcon: nil, infoFlagsOut: &flags)
-            report("encode=\(enc) flags=\(flags.rawValue)")
-            // 不调 CompleteFrames(避免看门狗), 立即释放
-            VTCompressionSessionInvalidate(s)
+        guard let p = pb else { VTCompressionSessionInvalidate(s); report("no pb"); return }
+
+        var flags: VTEncodeInfoFlags = []
+        let enc = VTCompressionSessionEncodeFrame(s, imageBuffer: p,
+            presentationTimeStamp: CMTime(value: 0, timescale: 600),
+            duration: CMTime(value: 1, timescale: 600),
+            frameProperties: nil, sourceFrameRefcon: nil, infoFlagsOut: &flags)
+        report("encode=\(enc) flags=\(flags.rawValue) (1=async)")
+
+        // 后台线程等 CompleteFrames —— 主线程不卡, 不会被看门狗杀
+        let sessionHolder = s
+        DispatchQueue.global().async {
+            let t0 = Date()
+            report("waiting CompleteFrames (bg)...")
+            VTCompressionSessionCompleteFrames(sessionHolder, untilPresentationTimeStamp: .invalid)
+            let dt = Date().timeIntervalSince(t0)
+            report("CompleteFrames returned after \(String(format: "%.1f", dt))s")
+            VTCompressionSessionInvalidate(sessionHolder)
             report("done")
-        } else {
-            VTCompressionSessionInvalidate(s)
-            report("no pb")
         }
     }
 
