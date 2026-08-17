@@ -37,7 +37,7 @@ final class AVERunnerJPEG2 {
 
         // dummy small pixel data; CGImageCreate accepts arbitrary dims
         let dummy = [UInt8](repeating: 0x7f, count: 8192)
-        guard let provider = CGDataProvider(data: dummy as CFData) else {
+        guard let provider = CGDataProvider(data: Data(dummy) as CFData) else {
             report("no provider"); return
         }
         guard let cs = CGColorSpace(name: CGColorSpace.sRGB) else {
