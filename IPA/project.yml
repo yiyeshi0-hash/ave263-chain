@@ -1,0 +1,24 @@
+name: AVE263
+options:
+  bundleIdPrefix: com.research
+  deploymentTarget:
+    iOS: "15.0"
+  xcodeVersion: "15.0"
+settings:
+  base:
+    CODE_SIGNING_ALLOWED: "NO"
+    CODE_SIGNING_REQUIRED: "NO"
+    CODE_SIGN_IDENTITY: ""
+targets:
+  AVE263:
+    type: application
+    platform: iOS
+    sources:
+      - AVE263
+    info:
+      path: AVE263/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.research.ave263
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "5.0"

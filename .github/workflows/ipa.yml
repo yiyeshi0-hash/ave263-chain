@@ -14,9 +14,18 @@ jobs:
       - name: Show Xcode
         run: xcodebuild -version
 
+      - name: Install xcodegen
+        run: brew install xcodegen || true
+
+      - name: Generate project
+        run: |
+          cd IPA
+          xcodegen generate
+
       - name: Build unsigned IPA
         run: |
           cd IPA
+          set -o pipefail
           xcodebuild -project AVE263.xcodeproj \
             -scheme AVE263 \
             -configuration Release \
@@ -25,16 +34,34 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
-            build 2>&1 | tail -40
-          # Package .app into .ipa (unsigned — install via trollstore/altstore-side tools on research device)
+            build 2>&1 | tee build.log | tail -40
+
+      - name: Package IPA
+        if: always()
+        run: |
+          cd IPA
           APP=$(find build -name 'AVE263.app' -type d | head -1)
-          echo "APP=$APP"
-          mkdir -p Payload
-          cp -R "$APP" Payload/
-          zip -r AVE263-unsigned.ipa Payload
-          ls -la AVE263-unsigned.ipa
+          if [ -n "$APP" ]; then
+            rm -rf Payload
+            mkdir -p Payload
+            cp -R "$APP" Payload/
+            zip -r AVE263-unsigned.ipa Payload
+            ls -la AVE263-unsigned.ipa
+          else
+            echo "NO APP FOUND — build failed"
+            tail -60 build.log
+            exit 1
+          fi
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: IPA/build.log
 
       - name: Upload IPA
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: AVE263-unsigned-ipa
