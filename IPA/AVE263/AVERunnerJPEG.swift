@@ -1,7 +1,6 @@
 // AVERunnerJPEG.swift — 26.3 JPEG encode via VideoToolbox (system path)
 // Goal: find whether VT JPEG session create/encode accepts huge dims and
 //       whether it reaches kernel startEncoder (unchecked in 26.3) -> getMCUSize mul wrap
-import AVFoundation
 import VideoToolbox
 import UIKit
 
