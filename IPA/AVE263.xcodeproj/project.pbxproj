@@ -11,6 +11,7 @@
 		100000000000000000000002 /* AVERunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000002 /* AVERunner.swift */; };
 		100000000000000000000005 /* AVERunnerV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000005 /* AVERunnerV2.swift */; };
 		100000000000000000000006 /* AVERunnerV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000006 /* AVERunnerV3.swift */; };
+		100000000000000000000007 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 200000000000000000000007 /* IOKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		200000000000000000000004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		200000000000000000000005 /* AVERunnerV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVERunnerV2.swift; sourceTree = "<group>"; };
 		200000000000000000000006 /* AVERunnerV3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVERunnerV3.swift; sourceTree = "<group>"; };
+		200000000000000000000007 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				100000000000000000000007 /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
