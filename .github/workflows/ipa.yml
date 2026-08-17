@@ -14,7 +14,10 @@ jobs:
       - name: Show Xcode
         run: xcodebuild -version
 
-      - name: Build unsigned IPA (hand-written pbxproj, objectVersion 56)
+      - name: Install ldid
+        run: brew install ldid || true
+
+      - name: Build unsigned app
         run: |
           cd IPA
           set -o pipefail
@@ -26,14 +29,22 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
-            build 2>&1 | tee build.log | tail -50
+            build 2>&1 | tee build.log | tail -30
 
-      - name: Package IPA
+      - name: Ldid-sign with entitlements and package IPA
         if: always()
         run: |
           cd IPA
           APP=$(find build -name 'AVE263.app' -type d | head -1)
           if [ -n "$APP" ]; then
+            # Re-sign the binary with ldid + entitlements (no cert needed)
+            ldid -Sentitlements.plist "$APP/AVE263"
+            # Also inject a minimal adhoc signature so the app installs
+            rm -f "$APP/embedded.mobileprovision"
+            # Verify entitlements
+            ldid -e "$APP/AVE263" > entitlements-check.txt 2>&1 || true
+            cat entitlements-check.txt || true
+            # Package
             rm -rf Payload
             mkdir -p Payload
             cp -R "$APP" Payload/
@@ -41,7 +52,7 @@ jobs:
             ls -la AVE263-unsigned.ipa
           else
             echo "NO APP FOUND — build failed"
-            tail -80 build.log
+            tail -60 build.log
             exit 1
           fi
 
