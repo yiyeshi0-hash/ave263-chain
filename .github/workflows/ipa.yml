@@ -1,0 +1,44 @@
+name: Build IPA
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app || echo "default Xcode used"
+
+      - name: Show Xcode
+        run: xcodebuild -version
+
+      - name: Build unsigned IPA
+        run: |
+          cd IPA
+          xcodebuild -project AVE263.xcodeproj \
+            -scheme AVE263 \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+          # Package .app into .ipa (unsigned — install via trollstore/altstore-side tools on research device)
+          APP=$(find build -name 'AVE263.app' -type d | head -1)
+          echo "APP=$APP"
+          mkdir -p Payload
+          cp -R "$APP" Payload/
+          zip -r AVE263-unsigned.ipa Payload
+          ls -la AVE263-unsigned.ipa
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: AVE263-unsigned-ipa
+          path: IPA/AVE263-unsigned.ipa
