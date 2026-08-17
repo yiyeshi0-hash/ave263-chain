@@ -14,8 +14,14 @@ jobs:
       - name: Show Xcode
         run: xcodebuild -version
 
-      - name: Install ldid
-        run: brew install ldid || true
+      - name: Install tools
+        run: brew install ldid xcodegen || true
+
+      - name: Generate project (auto-include all sources)
+        run: |
+          cd IPA
+          xcodegen generate
+          ls -la AVE263.xcodeproj
 
       - name: Build unsigned app
         run: |
@@ -37,14 +43,10 @@ jobs:
           cd IPA
           APP=$(find build -name 'AVE263.app' -type d | head -1)
           if [ -n "$APP" ]; then
-            # Re-sign the binary with ldid + entitlements (no cert needed)
             ldid -Sentitlements.plist "$APP/AVE263"
-            # Also inject a minimal adhoc signature so the app installs
             rm -f "$APP/embedded.mobileprovision"
-            # Verify entitlements
             ldid -e "$APP/AVE263" > entitlements-check.txt 2>&1 || true
             cat entitlements-check.txt || true
-            # Package
             rm -rf Payload
             mkdir -p Payload
             cp -R "$APP" Payload/
