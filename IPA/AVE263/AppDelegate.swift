@@ -17,13 +17,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 final class ViewController: UIViewController {
-    private let log = UITextView()
-    private let runButton = UIButton(type: .system)
-    private let runV2Button = UIButton(type: .system)
-    private let runV3Button = UIButton(type: .system)
-    private let jpegCreateButton = UIButton(type: .system)
-    private let jpegEncodeButton = UIButton(type: .system)
-    private let jpegNextButton = UIButton(type: .system)
+    private var log: UITextView!
+    private var runButton: UIButton!
+    private var runV2Button: UIButton!
+    private var runV3Button: UIButton!
+    private var jpegCreateButton: UIButton!
+    private var jpegEncodeButton: UIButton!
+    private var jpegNextButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
