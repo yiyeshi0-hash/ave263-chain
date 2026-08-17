@@ -24,6 +24,7 @@ final class ViewController: UIViewController {
     private var jpegCreateButton: UIButton!
     private var jpegEncodeButton: UIButton!
     private var jpegNextButton: UIButton!
+    private var jpeg2Button: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,13 +45,14 @@ final class ViewController: UIViewController {
         jpegCreateButton = mk(CGRect(x: 20, y: 176, width: 340, height: 32), "JPEG create-only (size seq)", #selector(jpegCreateTapped))
         jpegEncodeButton = mk(CGRect(x: 20, y: 212, width: 340, height: 32), "JPEG create+encode", #selector(jpegEncodeTapped))
         jpegNextButton = mk(CGRect(x: 20, y: 248, width: 340, height: 32), "JPEG next size", #selector(jpegNextTapped))
+        jpeg2Button = mk(CGRect(x: 20, y: 284, width: 340, height: 32), "JPEG2 ImageIO encode", #selector(jpeg2Tapped))
 
-        log.frame = CGRect(x: 20, y: 288, width: view.bounds.width - 40, height: view.bounds.height - 300)
+        log.frame = CGRect(x: 20, y: 324, width: view.bounds.width - 40, height: view.bounds.height - 336)
         log.isEditable = false
         log.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
         log.text = "AVE263 research ready\n"
 
-        let buttons: [UIButton] = [runButton, runV2Button, runV3Button, jpegCreateButton, jpegEncodeButton, jpegNextButton]
+        let buttons: [UIButton] = [runButton, runV2Button, runV3Button, jpegCreateButton, jpegEncodeButton, jpegNextButton, jpeg2Button]
         for v in buttons { view.addSubview(v) }
         view.addSubview(log)
     }
@@ -95,5 +97,13 @@ final class ViewController: UIViewController {
 
     @objc private func jpegNextTapped() {
         log.text += AVERunnerJPEG.shared.next() + "\n"
+    }
+
+    @objc private func jpeg2Tapped() {
+        log.text += AVERunnerJPEG2.shared.next() + "\n"
+        log.text += "=== JPEG2 ImageIO ===\n"
+        AVERunnerJPEG2.shared.run { [weak self] msg in
+            DispatchQueue.main.async { self?.log.text += msg + "\n" }
+        }
     }
 }
